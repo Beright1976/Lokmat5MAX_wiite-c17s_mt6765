@@ -15,12 +15,12 @@
 **FLASH AT YOUR OWN RISK.**
 I am not responsible for bricked devices, dead SD cards, thermonuclear war, or you getting fired because the alarm app failed. Please do some research if you have any concerns about features included in this recovery before flashing it! YOU are choosing to make these modifications.
 
-## Features
-- Fully working Touchscreen.
+## Features (testing)
+- Fully working Touchscreen. (Verified)
 - ADB/MTP support.
 - Decryption support for FBE (File-Based Encryption).
 - Fastbootd support.
-- Forensic-level partition mapping verified against a custom device database.
+- Forensic-level partition mapping verified against a custom device database.(verified)
 
 ## Flashing Instructions
 
