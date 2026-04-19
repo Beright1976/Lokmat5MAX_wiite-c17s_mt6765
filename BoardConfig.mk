@@ -1,0 +1,176 @@
+# LOKMAT APPLLP 5 MAX (C17S) - BoardConfig.mk
+# Device: LOKMAT APPLLP 5 MAX | Codename: c17s | SoC: MT6762V/WB (mt6765 platform)
+# Build: TWRP 11 (Android-11 branch)
+# All values verified against forensic device database - live hardware verified
+
+DEVICE_PATH := device/wiite/c17s
+
+# For building with minimal manifest
+ALLOW_MISSING_DEPENDENCIES := true
+
+# Architecture
+TARGET_ARCH := arm64
+TARGET_ARCH_VARIANT := armv8-a
+TARGET_CPU_ABI := arm64-v8a
+TARGET_CPU_ABI2 :=
+TARGET_CPU_VARIANT := cortex-a53
+
+TARGET_2ND_ARCH := arm
+TARGET_2ND_ARCH_VARIANT := armv8-a
+TARGET_2ND_CPU_ABI := armeabi-v7a
+TARGET_2ND_CPU_ABI2 := armeabi
+TARGET_2ND_CPU_VARIANT := cortex-a53
+
+TARGET_BOARD_SUFFIX := _64
+TARGET_USES_64_BIT_BINDER := true
+
+# Bootloader
+TARGET_BOOTLOADER_BOARD_NAME := WP_C17S_PIX_TFT_D4
+TARGET_NO_BOOTLOADER := true
+
+# Platform (Franken-SoC: ro.board.platform=mt6765 on mt6762 silicon)
+TARGET_BOARD_PLATFORM := mt6765
+BOARD_HAS_MTK_HARDWARE := true
+BOARD_USES_MTK_HARDWARE := true
+MTK_HARDWARE := true
+
+# OTA Assert
+TARGET_OTA_ASSERT_DEVICE := C17S,c17s,APPLLP5MAX,WP_C17S_PIX_TFT_D4
+
+# Kernel - FORENSIC VERIFIED OFFSETS (hex-decoded from stock recovery.bin)
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.hardware=mt6765 androidboot.selinux=permissive androidboot.boot_devices=bootdevice,11230000.mmc
+BOARD_KERNEL_BASE := 0x40000000
+BOARD_KERNEL_OFFSET := 0x00080000
+BOARD_RAMDISK_OFFSET := 0x11b00000
+BOARD_KERNEL_TAGS_OFFSET := 0x07880000
+BOARD_DTB_OFFSET := 0x07880000
+BOARD_KERNEL_PAGESIZE := 2048
+BOARD_BOOTIMG_HEADER_VERSION := 2
+BOARD_FLASH_BLOCK_SIZE := 131072
+BOARD_KERNEL_IMAGE_NAME := kernel
+
+# Prebuilt Kernel/DTB/DTBO
+TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
+TARGET_PREBUILT_DTB := $(DEVICE_PATH)/prebuilt/dtb.img
+BOARD_PREBUILT_DTBOIMAGE := $(DEVICE_PATH)/prebuilt/dtbo.img
+BOARD_INCLUDE_DTB_IN_BOOTIMG := true
+
+# mkbootimg arguments (v2 header)
+BOARD_MKBOOTIMG_ARGS += --base $(BOARD_KERNEL_BASE)
+BOARD_MKBOOTIMG_ARGS += --pagesize $(BOARD_KERNEL_PAGESIZE)
+BOARD_MKBOOTIMG_ARGS += --kernel_offset $(BOARD_KERNEL_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --ramdisk_offset $(BOARD_RAMDISK_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --tags_offset $(BOARD_KERNEL_TAGS_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --dtb_offset $(BOARD_DTB_OFFSET)
+BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOTIMG_HEADER_VERSION)
+BOARD_MKBOOTIMG_ARGS += --dtb $(TARGET_PREBUILT_DTB)
+
+# Partitions - sizes verified from /proc/partitions and lpdump
+BOARD_HAS_LARGE_FILESYSTEM := true
+BOARD_BOOTIMAGE_PARTITION_SIZE := 33554432
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 33554432
+BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_VENDORIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_PRODUCTIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
+BOARD_USERDATAIMAGE_FILE_SYSTEM_TYPE := ext4
+
+TARGET_USERIMAGES_USE_EXT4 := true
+TARGET_USERIMAGES_USE_F2FS := true
+TARGET_COPY_OUT_VENDOR := vendor
+TARGET_COPY_OUT_PRODUCT := product
+
+# Dynamic Partitions (super: 4 GiB, logical: system vendor product)
+BOARD_SUPER_PARTITION_SIZE := 4294967296
+BOARD_SUPER_PARTITION_GROUPS := main
+BOARD_MAIN_SIZE := 4292870144
+BOARD_MAIN_PARTITION_LIST := system vendor product
+
+# System as root (A-only with dedicated recovery - no SAR)
+BOARD_BUILD_SYSTEM_ROOT_IMAGE := false
+BOARD_SUPPRESS_SECURE_ERASE := true
+
+# Metadata partition (required for FBE)
+BOARD_USES_METADATA_PARTITION := true
+BOARD_ROOT_EXTRA_FOLDERS += metadata
+
+# AVB - disabled on stock per forensic verification (vbmeta flags=0x03)
+BOARD_AVB_ENABLE := true
+BOARD_AVB_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
+BOARD_AVB_ROLLBACK_INDEX := 0
+BOARD_AVB_RECOVERY_ALGORITHM := SHA256_RSA2048
+BOARD_AVB_RECOVERY_KEY_PATH := external/avb/test/data/testkey_rsa2048.pem
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 0
+BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
+
+# Recovery
+TARGET_NO_RECOVERY := false
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
+TARGET_RECOVERY_FSTAB := $(DEVICE_PATH)/recovery.fstab
+BOARD_HAS_NO_SELECT_BUTTON := true
+RECOVERY_SDCARD_ON_DATA := true
+
+# Crypto - FBE (Keymaster 4.0, pure-software keymaster implementation)
+TW_INCLUDE_CRYPTO := true
+TW_INCLUDE_CRYPTO_FBE := true
+TW_INCLUDE_FBE_METADATA_DECRYPT := true
+TW_USE_FSCRYPT_POLICY := 1
+
+# Additional recovery modules (crypto HALs)
+TARGET_RECOVERY_DEVICE_MODULES += libpuresoftkeymasterdevice
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
+
+# Properties and init
+TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6765.rc
+
+# Platform version (anti-rollback hack)
+PLATFORM_VERSION := 16.1.0
+PLATFORM_SECURITY_PATCH := 2099-12-31
+VENDOR_SECURITY_PATCH := 2099-12-31
+
+# Display (480x640 MDPI - LOKMAT C17S verified)
+TW_THEME := portrait_mdpi
+DEVICE_SCREEN_WIDTH := 480
+DEVICE_SCREEN_HEIGHT := 640
+TARGET_SCREEN_WIDTH := 480
+TARGET_SCREEN_HEIGHT := 640
+TARGET_SCREEN_DENSITY := 160
+TW_BRIGHTNESS_PATH := "/sys/class/leds/lcd-backlight/brightness"
+TARGET_RECOVERY_LCD_BACKLIGHT_PATH := "/sys/class/leds/lcd-backlight/brightness"
+TW_MAX_BRIGHTNESS := 255
+TW_DEFAULT_BRIGHTNESS := 150
+TW_NO_SCREEN_BLANK := true
+TW_SCREEN_BLANK_ON_BOOT := true
+
+# TWRP configuration
+TW_USE_TOOLBOX := true
+TW_EXTRA_LANGUAGES := true
+TW_DEFAULT_LANGUAGE := en
+TW_EXCLUDE_DEFAULT_USB_INIT := true
+TW_INCLUDE_NTFS_3G := true
+TARGET_USES_MKE2FS := true
+TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
+TW_INCLUDE_FASTBOOTD := true
+
+# Debug (keep enabled during alpha development)
+TWRP_INCLUDE_LOGCAT := true
+TARGET_USES_LOGD := true
+
+# Excludes (size-optimization)
+TW_EXCLUDE_TWRPAPP := true
+TW_EXCLUDE_APEX := true
+
+# Developer identification
+TW_DEFAULT_DEVICE_NAME := c17s
+TW_DEVICE_VERSION := ALPHA-beright1976
+
+# Treble
+BOARD_VNDK_VERSION := current
+
+# Build system workarounds (minimal manifest)
+BUILD_BROKEN_DUP_RULES := true
+BUILD_BROKEN_PREBUILT_ELF_FILES := true
+BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
+BUILD_BROKEN_MISSING_REQUIRED_MODULES := true

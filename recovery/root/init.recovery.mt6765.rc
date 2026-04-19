@@ -1,0 +1,89 @@
+# LOKMAT APPLLP 5 MAX (C17S) - init.recovery.mt6765.rc
+# TWRP 11 recovery init for MT6762V/WB (mt6765 platform, mt6762 hardware)
+# Keymaster 4.0 pure-software implementation, FBE decryption
+
+on early-init
+    # Early display backlight (pre-TWRP splash)
+    write /sys/class/leds/lcd-backlight/brightness 150
+
+on init
+    # USB configuration - ADB active by default
+    setprop sys.usb.configfs 1
+    setprop sys.usb.config adb
+
+    # nRF52832 coprocessor UART bridge (device-specific sensor hub)
+    chmod 0666 /dev/ttyS1
+    chown system system /dev/ttyS1
+
+    # Display pipeline nodes (MTK DRM)
+    chmod 0664 /dev/graphics/fb0
+    chmod 0664 /dev/mtk_disp_mgr
+    chmod 0660 /dev/mtkfb_vsync
+    chmod 0660 /dev/sw_sync
+
+on fs
+    # Keyring for crypto
+    install_keyring
+
+    # MTK eMMC A/B handling (preloader symlinks for combo emmc/ufs)
+    symlink /dev/block/sda /dev/block/mmcblk0boot0
+    symlink /dev/block/sdb /dev/block/mmcblk0boot1
+
+on post-fs
+    # Remediate sysfs label mismatch for wiite_corp_ctrl sensor stack
+    restorecon -R /sys/class/misc/wiite_corp_ctrl
+
+on boot
+    # CPU online - bring up all 8 cores for faster recovery ops
+    write /sys/devices/system/cpu/cpu1/online 1
+    write /sys/devices/system/cpu/cpu2/online 1
+    write /sys/devices/system/cpu/cpu3/online 1
+    write /sys/devices/system/cpu/cpu4/online 1
+    write /sys/devices/system/cpu/cpu5/online 1
+    write /sys/devices/system/cpu/cpu6/online 1
+    write /sys/devices/system/cpu/cpu7/online 1
+
+# hwservicemanager - required BEFORE keymaster can bind
+service hwservicemanager /system/bin/hwservicemanager
+    class hal
+    user system
+    group system readproc hsm
+    critical
+    onrestart setprop hwservicemanager.ready false
+    seclabel u:r:recovery:s0
+
+# Keymaster 4.0 service (software implementation - libpuresoftkeymasterdevice)
+service vendor.keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service
+    interface android.hardware.keymaster@4.0::IKeymasterDevice default
+    class early_hal
+    user root
+    group root drmrpc
+    disabled
+    seclabel u:r:recovery:s0
+
+# Gatekeeper 1.0 service (software)
+service vendor.gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
+    interface android.hardware.gatekeeper@1.0::IGatekeeper default
+    class early_hal
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+# Start crypto services when hwservicemanager signals ready
+on property:hwservicemanager.ready=true
+    start vendor.keymaster-4-0
+    start vendor.gatekeeper-1-0
+
+# Stop crypto services when no longer needed
+on property:ro.crypto.state=unsupported
+    stop vendor.keymaster-4-0
+    stop vendor.gatekeeper-1-0
+
+on property:ro.crypto.state=unencrypted
+    stop vendor.keymaster-4-0
+    stop vendor.gatekeeper-1-0
+
+on property:twrp.decrypt.done=true
+    stop vendor.keymaster-4-0
+    stop vendor.gatekeeper-1-0
