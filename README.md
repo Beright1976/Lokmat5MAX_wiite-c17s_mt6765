@@ -50,9 +50,13 @@ If you have `mtkclient` installed:
 ```bash
 python3 mtk r recovery prebuilt_images/recovery.img
 ```
+YOU WILL NEED TO FLASH A MODIFIED PARA.BIN TO GET IT TO REBOOT DIRECTLY TO TWRP
+AND THEN REFLASH YOUR STOCK PARA TO RETURN STOCK BEHAVIOR AND ENTER RECOVERY FROM SYSTEM .
+IF YOU DO NOT REBOOT TO RECOVERY FIRST BOOT RECOVERY MAY NOT STICK
+
 
 ## Forensic Database
-This repository includes a `database/` folder containing a massive, home-built forensic reverse-engineering database for this specific device. This is one of the most comprehensive datasets available for the LOKMAT 5 MAX, covering offsets, partition sizes, and hardware IDs.
+This repository includes a `database/` folder containing a massive, home-built forensic reverse-engineering database for this specific device. This is one of the most comprehensive datasets available for the LOKMAT 5 MAX, covering offsets, partition sizes, and hardware IDs. it s not completed yet theres some slop stilll ill be making changes and additions and refinements.as a prelude to asop gsi for the device..
 
 ## Source Code
 The root of this repository contains the TWRP device tree for `device/wiite/c17s`. You can include this in your TWRP 11.0 manifest to build from source.
