@@ -31,6 +31,14 @@ on post-fs
     # Remediate sysfs label mismatch for wiite_corp_ctrl sensor stack
     restorecon -R /sys/class/misc/wiite_corp_ctrl
 
+    # 1. FORCE EXECUTABLE PERMISSIONS ON PREBUILT BINARIES
+    chmod 0755 /system/bin/hwservicemanager
+    chmod 0755 /vendor/bin/hw/android.hardware.keymaster@4.0-service
+    chmod 0755 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
+
+    # 2. START THE HWBINDER DAEMON (This triggers the crypto chain)
+    start hwservicemanager
+
 on boot
     # CPU online - bring up all 8 cores for faster recovery ops
     write /sys/devices/system/cpu/cpu1/online 1

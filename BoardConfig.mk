@@ -117,10 +117,38 @@ TW_INCLUDE_CRYPTO := true
 TW_INCLUDE_CRYPTO_FBE := true
 TW_INCLUDE_FBE_METADATA_DECRYPT := true
 TW_USE_FSCRYPT_POLICY := 1
+TW_PREPARE_LOGICAL_PARTITIONS := true
 
-# Additional recovery modules (crypto HALs)
-TARGET_RECOVERY_DEVICE_MODULES += libpuresoftkeymasterdevice
-TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
+# Complete verified crypto blob set - 13 libs - database Section 4317
+TARGET_RECOVERY_DEVICE_MODULES += \
+    android.hardware.keymaster@4.0.so \
+    android.hardware.keymaster@3.0.so \
+    android.hardware.gatekeeper@1.0.so \
+    android.hardware.gatekeeper@1.0-impl.so \
+    gatekeeper.default.so \
+    libkeymaster4.so \
+    libkeymaster4support.so \
+    libkeymaster_messages.so \
+    libkeymaster_portable.so \
+    libpuresoftkeymasterdevice.so \
+    libsoftkeymasterdevice.so \
+    libcrypto.so \
+    libgatekeeper.so
+
+TW_RECOVERY_ADDITIONAL_RELINK_LIBRARY_FILES += \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.keymaster@4.0.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.keymaster@3.0.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.gatekeeper@1.0.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/android.hardware.gatekeeper@1.0-impl.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/gatekeeper.default.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4support.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster_messages.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster_portable.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libsoftkeymasterdevice.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libcrypto.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libgatekeeper.so
 
 # Properties and init
 TARGET_RECOVERY_INITRC := $(DEVICE_PATH)/recovery/root/init.recovery.mt6765.rc
@@ -152,6 +180,10 @@ TW_INCLUDE_NTFS_3G := true
 TARGET_USES_MKE2FS := true
 TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
 TW_INCLUDE_FASTBOOTD := true
+
+# MTP & USB Configuration
+TW_HAS_MTP := true
+TW_USE_NEW_MINADBD := true
 
 # Debug (keep enabled during alpha development)
 TWRP_INCLUDE_LOGCAT := true

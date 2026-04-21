@@ -14,7 +14,7 @@ on boot
     setprop sys.usb.configfs 1
     setprop sys.usb.ffs.aio_compat 1
     setprop vendor.usb.controller "musb-hdrc"
-    setprop sys.usb.config adb
+    setprop sys.usb.config mtp,adb
 
 on property:ro.boot.usbcontroller=*
     setprop sys.usb.controller ${ro.boot.usbcontroller}

@@ -8,17 +8,17 @@
 /product        ext4    /dev/block/mapper/product                             flags=display="Product";logical;backup=1
 
 # FBE Metadata (must come before /data for FBE to work)
-/metadata       ext4    /dev/block/platform/bootdevice/by-name/md_udc         flags=display="Metadata";backup=1
+/metadata       ext4    /dev/block/platform/bootdevice/by-name/md_udc         flags=display="Metadata";backup=1;first_stage_mount
 
 # User data (FBE encrypted)
-/data           ext4    /dev/block/platform/bootdevice/by-name/userdata       flags=display="Data";wipeingui;fileencryption=aes-256-xts
+/data           ext4    /dev/block/platform/bootdevice/by-name/userdata       flags=display="Data";wipeingui;fileencryption=aes-256-xts:aes-256-cts
 
 # Cache
 /cache          ext4    /dev/block/platform/bootdevice/by-name/cache          flags=display="Cache";backup=1;wipeingui
 
 # Critical read-only MTK partitions (protect, nvram, nvdata, nvcfg)
-/mnt/vendor/protect_f   ext4    /dev/block/platform/bootdevice/by-name/protect1   flags=display="Protect F";backup=1;canbewiped=0
-/mnt/vendor/protect_s   ext4    /dev/block/platform/bootdevice/by-name/protect2   flags=display="Protect S";backup=1;canbewiped=0;subpartitionof=/mnt/vendor/protect_f
+/protect_f      ext4    /dev/block/platform/bootdevice/by-name/protect1       flags=display="Protect F";backup=1;canbewiped=0
+/protect_s      ext4    /dev/block/platform/bootdevice/by-name/protect2       flags=display="Protect S";backup=1;canbewiped=0;subpartitionof=/protect_f
 /nvram          emmc    /dev/block/platform/bootdevice/by-name/nvram          flags=display="NVRAM";backup=1;flashimg=1
 /nvdata         ext4    /dev/block/platform/bootdevice/by-name/nvdata         flags=display="NVData";backup=1
 /nvcfg          ext4    /dev/block/platform/bootdevice/by-name/nvcfg          flags=display="NVCfg";backup=1
