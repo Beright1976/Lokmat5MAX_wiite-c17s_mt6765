@@ -2,15 +2,13 @@
 # TWRP 11 recovery init for MT6762V/WB (mt6765 platform, mt6762 hardware)
 # Keymaster 4.0 pure-software implementation, FBE decryption
 
+import /init.recovery.usb.rc
+
 on early-init
     # Early display backlight (pre-TWRP splash)
     write /sys/class/leds/lcd-backlight/brightness 150
 
 on init
-    # USB configuration - ADB active by default
-    setprop sys.usb.configfs 1
-    setprop sys.usb.config adb
-
     # nRF52832 coprocessor UART bridge (device-specific sensor hub)
     chmod 0666 /dev/ttyS1
     chown system system /dev/ttyS1
@@ -45,17 +43,14 @@ on boot
 
 # hwservicemanager - required BEFORE keymaster can bind
 service hwservicemanager /system/bin/hwservicemanager
-    class hal
     user system
     group system readproc hsm
-    critical
     onrestart setprop hwservicemanager.ready false
     seclabel u:r:recovery:s0
 
 # Keymaster 4.0 service (software implementation - libpuresoftkeymasterdevice)
 service vendor.keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-service
     interface android.hardware.keymaster@4.0::IKeymasterDevice default
-    class early_hal
     user root
     group root drmrpc
     disabled
@@ -64,7 +59,6 @@ service vendor.keymaster-4-0 /vendor/bin/hw/android.hardware.keymaster@4.0-servi
 # Gatekeeper 1.0 service (software)
 service vendor.gatekeeper-1-0 /vendor/bin/hw/android.hardware.gatekeeper@1.0-service
     interface android.hardware.gatekeeper@1.0::IGatekeeper default
-    class early_hal
     user root
     group root
     disabled

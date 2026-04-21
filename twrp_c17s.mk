@@ -41,8 +41,9 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/prebuilt/libs/libkeymaster_portable.so:recovery/root/vendor/lib64/libkeymaster_portable.so \
     $(LOCAL_PATH)/prebuilt/libs/libpuresoftkeymasterdevice.so:recovery/root/vendor/lib64/libpuresoftkeymasterdevice.so \
     $(LOCAL_PATH)/prebuilt/libs/libsoftkeymasterdevice.so:recovery/root/vendor/lib64/libsoftkeymasterdevice.so \
-    $(LOCAL_PATH)/prebuilt/libs/hwservicemanager:recovery/root/system/bin/hwservicemanager
-
+    $(LOCAL_PATH)/prebuilt/libs/hwservicemanager:recovery/root/system/bin/hwservicemanager \
+    $(LOCAL_PATH)/recovery/root/init.recovery.usb.rc:recovery/root/init.recovery.usb.rc 
+    
 # Build fingerprint override
 PRODUCT_BUILD_PROP_OVERRIDES += \
     BUILD_FINGERPRINT="SPRD/full_WP_C17S_PIX_TFT_D4/WP_C17S_PIX_TFT_D4:10/QP1A.190711.020/1749799430:user/test-keys"

@@ -38,7 +38,7 @@ MTK_HARDWARE := true
 TARGET_OTA_ASSERT_DEVICE := C17S,c17s,APPLLP5MAX,WP_C17S_PIX_TFT_D4
 
 # Kernel - FORENSIC VERIFIED OFFSETS (hex-decoded from stock recovery.bin)
-BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.hardware=mt6765 androidboot.selinux=permissive androidboot.boot_devices=bootdevice,11230000.mmc
+BOARD_KERNEL_CMDLINE := bootopt=64S3,32N2,64N2 androidboot.hardware=mt6765 androidboot.selinux=permissive androidboot.boot_devices=bootdevice,11230000.mmc androidboot.usbcontroller=musb-hdrc
 BOARD_KERNEL_BASE := 0x40000000
 BOARD_KERNEL_OFFSET := 0x00080000
 BOARD_RAMDISK_OFFSET := 0x11b00000
@@ -148,7 +148,6 @@ TW_SCREEN_BLANK_ON_BOOT := true
 TW_USE_TOOLBOX := true
 TW_EXTRA_LANGUAGES := true
 TW_DEFAULT_LANGUAGE := en
-TW_EXCLUDE_DEFAULT_USB_INIT := true
 TW_INCLUDE_NTFS_3G := true
 TARGET_USES_MKE2FS := true
 TW_USE_MODEL_HARDWARE_ID_FOR_DEVICE_ID := true
